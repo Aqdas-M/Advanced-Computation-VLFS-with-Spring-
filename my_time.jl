@@ -5,7 +5,7 @@ using Gridap.Geometry
 using Gridap.FESpaces
 using Gridap.CellData
 using Gridap.ODEs
-using Plots
+# using Plots
 using Parameters
 using WriteVTK
 
