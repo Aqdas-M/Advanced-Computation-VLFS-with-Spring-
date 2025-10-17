@@ -50,7 +50,7 @@ using WriteVTK
   d₀ = mᵨ/ρ
   a₁ = EI₁/ρ
   a₂ = EI₂/ρ
-  kᵣ = ξ*a₁/Lb
+  # kᵣ = ξ*a₁/Lb
 
   # wave properties
   λ = α*Lb
@@ -242,7 +242,7 @@ using WriteVTK
                         ∫(  a₁ * ( - jump(∇(v)⋅nΛb1) * mean(Δ(η)) - mean(Δ(v)) * jump(∇(η)⋅nΛb1) + γ*( jump(∇(v)⋅nΛb1) * jump(∇(η)⋅nΛb1) ) ) )dΛb1 +
                         ∫(  a₂ * ( - jump(∇(v)⋅nΛb2) * mean(Δ(η)) - mean(Δ(v)) * jump(∇(η)⋅nΛb2) + γ*( jump(∇(v)⋅nΛb2) * jump(∇(η)⋅nΛb2) ) ) )dΛb2 +
                         # ∫(  (jump(∇(v)⋅nΛj) * kᵣ * jump(∇(η)⋅nΛj)) )dΛj
-                        ∫(  ( kₛ * mean(Δ(η)) * mean(Δ(v))) )dΛj
+                        ∫(  ( kₛ * mean(η) * mean(v)) )dΛj
   b(t,(w,u,v)) =  ∫( w*vᵢₙ(t) )dΓin - ∫( ηd(t)*w - ∇ₙϕd(t)*(u + αₕ*w) )dΓd1
 
 
