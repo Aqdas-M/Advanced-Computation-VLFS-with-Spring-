@@ -212,18 +212,31 @@ using Gridap.CellData
   Y = MultiFieldFESpace([V_Ω,V_Γκ,V_Γη])
 
   # Weak form
+  # ∇ₙ(ϕ) = ∇(ϕ)⋅VectorValue(0.0,1.0)
+  # a((ϕ,κ,η),(w,u,v)) =      ∫(  ∇(w)⋅∇(ϕ) )dΩ   +
+  # ∫(  βₕ*(u + αₕ*w)*(g*κ - im*ω*ϕ) + im*ω*w*κ )dΓfs   +
+  # ∫(  βₕ*(u + αₕ*w)*(g*κ - im*ω*ϕ) + im*ω*w*κ - μ₂ᵢₙ*κ*w + μ₁ᵢₙ*∇ₙ(ϕ)*(u + αₕ*w) )dΓd1    +
+  # ∫(  βₕ*(u + αₕ*w)*(g*κ - im*ω*ϕ) + im*ω*w*κ - μ₂ₒᵤₜ*κ*w + μ₁ₒᵤₜ*∇ₙ(ϕ)*(u + αₕ*w) )dΓd2    +
+  # ∫(  ( v*((-ω^2*d₀ + g)*η - im*ω*ϕ) + a₁*Δ(v)*Δ(η) ) +  im*ω*w*η  )dΓb1  +
+  # ∫(  ( v*((-ω^2*d₀ + g)*η - im*ω*ϕ) + a₂*Δ(v)*Δ(η) ) +  im*ω*w*η  )dΓb2  +
+  # ∫(  a₁ * ( - jump(∇(v)⋅nΛb1) * mean(Δ(η)) - mean(Δ(v)) * jump(∇(η)⋅nΛb1) + γ*( jump(∇(v)⋅nΛb1) * jump(∇(η)⋅nΛb1) ) ) )dΛb1 +
+  # ∫(  a₂ * ( - jump(∇(v)⋅nΛb2) * mean(Δ(η)) - mean(Δ(v)) * jump(∇(η)⋅nΛb2) + γ*( jump(∇(v)⋅nΛb2) * jump(∇(η)⋅nΛb2) ) ) )dΛb2 +
+  # # ∫(  (jump(∇(v)⋅nΛj) * kᵣ * jump(∇(η)⋅nΛj)) )dΛj
+  # ∫(  ( kₛ * mean(η) * mean(v)) )dΛj
+  # l((w,u,v)) =  ∫( w*vᵢₙ )dΓin - ∫( ηd*w - ∇ₙϕd*(u + αₕ*w) )dΓd1
+
   ∇ₙ(ϕ) = ∇(ϕ)⋅VectorValue(0.0,1.0)
   a((ϕ,κ,η),(w,u,v)) =      ∫(  ∇(w)⋅∇(ϕ) )dΩ   +
-  ∫(  βₕ*(u + αₕ*w)*(g*κ - im*ω*ϕ) + im*ω*w*κ )dΓfs   +
-  ∫(  βₕ*(u + αₕ*w)*(g*κ - im*ω*ϕ) + im*ω*w*κ - μ₂ᵢₙ*κ*w + μ₁ᵢₙ*∇ₙ(ϕ)*(u + αₕ*w) )dΓd1    +
-  ∫(  βₕ*(u + αₕ*w)*(g*κ - im*ω*ϕ) + im*ω*w*κ - μ₂ₒᵤₜ*κ*w + μ₁ₒᵤₜ*∇ₙ(ϕ)*(u + αₕ*w) )dΓd2    +
-  ∫(  ( v*((-ω^2*d₀ + g)*η - im*ω*ϕ) + a₁*Δ(v)*Δ(η) ) +  im*ω*w*η  )dΓb1  +
-  ∫(  ( v*((-ω^2*d₀ + g)*η - im*ω*ϕ) + a₂*Δ(v)*Δ(η) ) +  im*ω*w*η  )dΓb2  +
-  ∫(  a₁ * ( - jump(∇(v)⋅nΛb1) * mean(Δ(η)) - mean(Δ(v)) * jump(∇(η)⋅nΛb1) + γ*( jump(∇(v)⋅nΛb1) * jump(∇(η)⋅nΛb1) ) ) )dΛb1 +
-  ∫(  a₂ * ( - jump(∇(v)⋅nΛb2) * mean(Δ(η)) - mean(Δ(v)) * jump(∇(η)⋅nΛb2) + γ*( jump(∇(v)⋅nΛb2) * jump(∇(η)⋅nΛb2) ) ) )dΛb2 +
-  # ∫(  (jump(∇(v)⋅nΛj) * kᵣ * jump(∇(η)⋅nΛj)) )dΛj
-  ∫(  ( kₛ * mean(η) * mean(v)) )dΛj
-  l((w,u,v)) =  ∫( w*vᵢₙ )dΓin - ∫( ηd*w - ∇ₙϕd*(u + αₕ*w) )dΓd1
+  ∫(  βₕ⋅(u + αₕ⋅w)⋅(g⋅κ - im⋅ω⋅ϕ) + im⋅ω⋅w⋅κ )dΓfs   +
+  ∫(  βₕ⋅(u + αₕ⋅w)⋅(g⋅κ - im⋅ω⋅ϕ) + im⋅ω⋅w⋅κ - μ₂ᵢₙ⋅κ⋅w + μ₁ᵢₙ⋅∇ₙ(ϕ)⋅(u + αₕ⋅w) )dΓd1    +
+  ∫(  βₕ⋅(u + αₕ⋅w)⋅(g⋅κ - im⋅ω⋅ϕ) + im⋅ω⋅w⋅κ - μ₂ₒᵤₜ⋅κ⋅w + μ₁ₒᵤₜ⋅∇ₙ(ϕ)⋅(u + αₕ⋅w) )dΓd2    +
+  ∫(  ( v⋅((-ω^2⋅d₀ + g)⋅η - im⋅ω⋅ϕ) + a₁⋅Δ(v)⋅Δ(η) ) +  im⋅ω⋅w⋅η  )dΓb1  +
+  ∫(  ( v⋅((-ω^2⋅d₀ + g)⋅η - im⋅ω⋅ϕ) + a₂⋅Δ(v)⋅Δ(η) ) +  im⋅ω⋅w⋅η  )dΓb2  +
+  ∫(  a₁ ⋅ ( - jump(∇(v)⋅nΛb1) ⋅ mean(Δ(η)) - mean(Δ(v)) ⋅ jump(∇(η)⋅nΛb1) + γ⋅( jump(∇(v)⋅nΛb1) ⋅ jump(∇(η)⋅nΛb1) ) ) )dΛb1 +
+  ∫(  a₂ ⋅ ( - jump(∇(v)⋅nΛb2) ⋅ mean(Δ(η)) - mean(Δ(v)) ⋅ jump(∇(η)⋅nΛb2) + γ⋅( jump(∇(v)⋅nΛb2) ⋅ jump(∇(η)⋅nΛb2) ) ) )dΛb2 +
+  # ∫(  (jump(∇(v)⋅nΛj) ⋅ kᵣ ⋅ jump(∇(η)⋅nΛj)) )dΛj
+  ∫(  ( kₛ ⋅ mean(η) ⋅ mean(v)) )dΛj
+  l((w,u,v)) =  ∫( w⋅vᵢₙ )dΓin - ∫( ηd⋅w - ∇ₙϕd⋅(u + αₕ⋅w) )dΓd1
 
   # Solution
   op = AffineFEOperator(a,l,X,Y)
